@@ -18,7 +18,6 @@ internal class BehandlingsbasertRevurderingsinfoMapperTest {
     ) = BehandlingResponse(
         behandlingId = UUID.randomUUID(),
         ident = "11109233444",
-        opprettet = LocalDateTime.parse("2026-01-10T09:00:00"),
         sistEndret = sistEndret,
         hendelseType = hendelseType,
         avklaringer = avklaringer,
@@ -57,9 +56,9 @@ internal class BehandlingsbasertRevurderingsinfoMapperTest {
             behandling(
                 avklaringer =
                     listOf(
-                        AvklaringSammendrag(kode = "A", begrunnelse = null),
-                        AvklaringSammendrag(kode = "B", begrunnelse = "Bruker sluttet på tiltaket"),
-                        AvklaringSammendrag(kode = "C", begrunnelse = "En annen begrunnelse"),
+                        AvklaringSammendrag(begrunnelse = null),
+                        AvklaringSammendrag(begrunnelse = "Bruker sluttet på tiltaket"),
+                        AvklaringSammendrag(begrunnelse = "En annen begrunnelse"),
                     ),
             )
         mapper.årsakTilFeilutbetaling(behandling) shouldBe "Bruker sluttet på tiltaket"
@@ -69,7 +68,7 @@ internal class BehandlingsbasertRevurderingsinfoMapperTest {
     fun `gir en tydelig fallback naar ingen avklaringer har begrunnelse`() {
         val behandling =
             behandling(
-                avklaringer = listOf(AvklaringSammendrag(kode = "A", begrunnelse = null)),
+                avklaringer = listOf(AvklaringSammendrag(begrunnelse = null)),
             )
         mapper.årsakTilFeilutbetaling(behandling) shouldBe
             "Ingen begrunnelse funnet i avklaringer for behandlingId=${behandling.behandlingId}"

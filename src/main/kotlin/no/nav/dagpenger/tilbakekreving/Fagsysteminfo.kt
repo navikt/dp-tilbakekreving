@@ -5,15 +5,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
-// --- Innkommende behov ---
-data class FagsysteminfoBehov(
-    val hendelsestype: String, // "fagsysteminfo_behov"
-    val versjon: Int,
-    val eksternFagsakId: String,
-    val kravgrunnlagReferanse: String, // base64, dekodes til behandlingId (UUID)
-    val hendelseOpprettet: LocalDateTime,
-)
-
 // --- Utgående svar ---
 data class FagsysteminfoSvar(
     val hendelsestype: String = "fagsysteminfo_svar",

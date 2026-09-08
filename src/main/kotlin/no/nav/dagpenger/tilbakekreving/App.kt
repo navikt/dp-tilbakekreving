@@ -15,17 +15,26 @@ fun main() {
 internal class ApplicationBuilder(
     env: Map<String, String>,
 ) : RapidsConnection.StatusListener {
+    private val behandlingKlient =
+        BehandlingHttpKlient(
+            url = Config.dpBehandlingApiUrl,
+            tokenSupplier = {
+                Config.dpBehandlingTokenProvider
+                    .clientCredentials(Config.dpBehandlingScope)
+                    .access_token ?: throw RuntimeException("Kunne ikke hente token")
+            },
+        )
+
     private val rapidsConnection =
         RapidApplication
             .create(env)
             .apply {
-                val behandlingKlient =
-                    BehandlingHttpKlient(url = Config.dpBehandlingApiUrl) {
-                        Config.dpBehandlingTokenProvider
-                            .clientCredentials(Config.dpBehandlingScope)
-                            .access_token ?: throw RuntimeException("Kunne ikke hente token")
-                    }
-                FagsysteminfoBehovLøser(this, behandlingKlient, BehandlingsbasertRevurderingsinfoMapper())
+                FagsysteminfoBehovLøser(
+                    rapidsConnection = this,
+                    behandlingKlient = behandlingKlient,
+                    revurderingsinfoMapper = BehandlingsbasertRevurderingsinfoMapper(),
+                    dryRun = Config.dryRun,
+                )
             }
 
     init {
@@ -35,6 +44,10 @@ internal class ApplicationBuilder(
     fun start() = rapidsConnection.start()
 
     override fun onStartup(rapidsConnection: RapidsConnection) {
-        logg.info { "Starter dp-tilbakekreving" }
+        logg.info { "Starter dp-tilbakekreving${if (Config.dryRun) " (DRY_RUN)" else ""}" }
+    }
+
+    override fun onShutdown(rapidsConnection: RapidsConnection) {
+        behandlingKlient.close()
     }
 }

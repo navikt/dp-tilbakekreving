@@ -14,6 +14,7 @@ import no.nav.dagpenger.tilbakekreving.behandling.api.client.NetworkResult
 import no.nav.dagpenger.tilbakekreving.behandling.api.models.BehandlingDTO
 import no.nav.dagpenger.tilbakekreving.behandling.api.models.HendelseDTOTypeDTO
 import tools.jackson.databind.DeserializationFeature
+import java.io.Closeable
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -28,7 +29,6 @@ import java.util.UUID
 data class BehandlingResponse(
     val behandlingId: UUID,
     val ident: String,
-    val opprettet: LocalDateTime,
     val sistEndret: LocalDateTime,
     val avklaringer: List<AvklaringSammendrag> = emptyList(),
     val hendelseType: HendelseType? = null,
@@ -53,10 +53,9 @@ enum class HendelseType {
 }
 
 /**
- * Kun det vi trenger fra en avklaring: koden og saksbehandlers fritekstbegrunnelse.
+ * Kun det vi trenger fra en avklaring: saksbehandlers fritekstbegrunnelse.
  */
 data class AvklaringSammendrag(
-    val kode: String,
     val begrunnelse: String?,
 )
 
@@ -82,9 +81,10 @@ class BehandlingKlientException(
  */
 class BehandlingHttpKlient(
     private val url: String,
-    private val httpClient: HttpClient = defaultHttpClient,
     private val tokenSupplier: () -> String,
-) : BehandlingKlient {
+    private val httpClient: HttpClient = nyHttpClient(),
+) : BehandlingKlient,
+    Closeable {
     private val behandlingClient = BehandlingClient(httpClient)
 
     override suspend fun hentBehandling(behandlingId: UUID): BehandlingResponse {
@@ -99,8 +99,10 @@ class BehandlingHttpKlient(
         }
     }
 
+    override fun close() = httpClient.close()
+
     companion object {
-        private val defaultHttpClient =
+        fun nyHttpClient() =
             HttpClient(CIO) {
                 install(ContentNegotiation) {
                     jackson {
@@ -109,7 +111,7 @@ class BehandlingHttpKlient(
                     }
                 }
                 install(HttpRequestRetry) {
-                    retryOnException(maxRetries = 5)
+                    retryOnExceptionOrServerErrors(maxRetries = 5)
                     constantDelay(millis = 100, randomizationMs = 0)
                 }
             }
@@ -126,11 +128,10 @@ private fun BehandlingDTO.tilBehandlingResponse() =
     BehandlingResponse(
         behandlingId = behandlingId,
         ident = ident,
-        opprettet = opprettet,
         sistEndret = sistEndret,
         avklaringer =
             avklaringer.map {
-                AvklaringSammendrag(kode = it.kode, begrunnelse = it.begrunnelse)
+                AvklaringSammendrag(begrunnelse = it.begrunnelse)
             },
         hendelseType = behandletHendelse.type.tilHendelseType(),
     )

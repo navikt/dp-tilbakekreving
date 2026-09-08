@@ -24,7 +24,6 @@ internal class FagsysteminfoBehovLøserTest {
         BehandlingResponse(
             behandlingId = forventetBehandlingId,
             ident = ident,
-            opprettet = LocalDateTime.parse("2026-01-10T09:00:00"),
             sistEndret = LocalDateTime.parse("2026-01-12T10:00:00"),
         )
 
@@ -78,11 +77,9 @@ internal class FagsysteminfoBehovLøserTest {
 
     @Test
     fun `håndterer ugyldig kravgrunnlagReferanse uten å kaste ukontrollert unntak`() {
-        // Antakelse: en kravgrunnlagReferanse som ikke dekoder til en gyldig
-        // UUID skal håndteres kontrollert (f.eks. logges og meldingen
-        // forkastes) fremfor å la unntaket boble videre til rapid-rammeverket.
-        // Denne testen forventes å feile (rødt) helt til implementer-agenten
-        // har lagt inn feilhåndtering rundt base64/UUID-dekodingen i onPacket.
+        // En kravgrunnlagReferanse som ikke dekoder til en gyldig UUID
+        // håndteres kontrollert: den logges og meldingen forkastes fremfor
+        // å la unntaket boble videre til rapid-rammeverket.
         testRapid.sendTestMessage(behovJson(kravgrunnlagReferanse = "ikke-gyldig-base64!!!"))
         testRapid.inspektør.size shouldBe 0
     }
