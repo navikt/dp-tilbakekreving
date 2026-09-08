@@ -26,8 +26,8 @@ spec:
     enabled: true
     path: /metrics
   replicas:
-    min: {{ replicas_min }}
-    max: {{ replicas_max }}
+    min: {{ replicas.min }}
+    max: {{ replicas.max }}
   resources:
     limits:
       memory: 512Mi
@@ -37,7 +37,7 @@ spec:
   secureLogs:
     enabled: true
   kafka:
-    pool: "{{ kafka_pool }}"
+    pool: "{{ kafka.pool }}"
   azure:
     application:
       enabled: true
