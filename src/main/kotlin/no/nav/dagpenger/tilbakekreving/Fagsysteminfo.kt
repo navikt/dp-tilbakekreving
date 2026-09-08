@@ -1,5 +1,6 @@
 package no.nav.dagpenger.tilbakekreving
 
+import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -22,6 +23,24 @@ data class FagsysteminfoSvar(
     val mottaker: Mottaker,
     val revurdering: Revurdering,
 )
+
+/**
+ * Serialiserer via [JsonMessage] (samme Jackson-oppsett som resten av
+ * meldingsflyten), slik at River kun har ett sted å slå opp for hvordan et
+ * svar bygges og sendes.
+ */
+fun FagsysteminfoSvar.toJson(): String =
+    JsonMessage
+        .newMessage(
+            mapOf(
+                "hendelsestype" to hendelsestype,
+                "versjon" to versjon,
+                "eksternFagsakId" to eksternFagsakId,
+                "hendelseOpprettet" to hendelseOpprettet,
+                "mottaker" to mottaker,
+                "revurdering" to revurdering,
+            ),
+        ).toJson()
 
 data class Mottaker(
     val type: MottakerType,

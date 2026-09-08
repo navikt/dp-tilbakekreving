@@ -11,7 +11,6 @@ import no.nav.dagpenger.tilbakekreving.behandling.api.client.ApiConfiguration
 import no.nav.dagpenger.tilbakekreving.behandling.api.client.BehandlingClient
 import no.nav.dagpenger.tilbakekreving.behandling.api.client.NetworkError
 import no.nav.dagpenger.tilbakekreving.behandling.api.client.NetworkResult
-import no.nav.dagpenger.tilbakekreving.behandling.api.models.AvgjørelseDTO
 import no.nav.dagpenger.tilbakekreving.behandling.api.models.BehandlingDTO
 import no.nav.dagpenger.tilbakekreving.behandling.api.models.HendelseDTOTypeDTO
 import tools.jackson.databind.DeserializationFeature
@@ -22,25 +21,22 @@ import java.util.UUID
  * Respons fra dp-behandling (kun det vi faktisk bruker).
  * Ikke map hele swagger-objektet; utvid ved behov fremfor å speile alt.
  *
- * [forslagOm] og [avklaringer] er tatt med fordi de er de beste kandidatene vi
- * har funnet i dp-behandling sin API-spec for å utlede revurderingsårsak og
- * begrunnelse (se [no.nav.dagpenger.tilbakekreving.BehandlingsbasertRevurderingsinfoMapper]).
- * Det finnes IKKE et dedikert felt for revurderingsårsak/vedtaksdato i API-et i
- * dag — dette er en antakelse som bør verifiseres med dp-behandling-teamet.
+ * [hendelseType] og [avklaringer] brukes til å utlede revurderingsårsak og
+ * begrunnelse (se [no.nav.dagpenger.tilbakekreving.BehandlingsbasertRevurderingsinfoMapper]),
+ * bekreftet av dp-behandling-teamet.
  */
 data class BehandlingResponse(
     val behandlingId: UUID,
     val ident: String,
     val opprettet: LocalDateTime,
     val sistEndret: LocalDateTime,
-    val forslagOm: Avgjørelse? = null,
     val avklaringer: List<AvklaringSammendrag> = emptyList(),
     val hendelseType: HendelseType? = null,
 )
 
 /**
  * Egen domeneversjon av dp-behandling sin `Hendelse.type`-enum — hvilken type
- * hendelse som utløste behandlingen. Brukes sammen med [forslagOm]/[avklaringer]
+ * hendelse som utløste behandlingen. Brukes sammen med [avklaringer]
  * til å utlede revurderingsårsak (se [no.nav.dagpenger.tilbakekreving.BehandlingsbasertRevurderingsinfoMapper]).
  */
 enum class HendelseType {
@@ -54,19 +50,6 @@ enum class HendelseType {
     KLAGE_FØRSTEINSTANS,
     KLAGE_KLAGEINSTANS,
     KLAGE_TRYGDERETTEN,
-}
-
-/**
- * Egen domeneversjon av dp-behandling sin `Avgjørelse`-enum, for å ikke la den
- * genererte DTO-en lekke inn i domenekoden.
- */
-enum class Avgjørelse {
-    INNVILGELSE,
-    AVSLAG,
-    STANS,
-    GJENOPPTAK,
-    ENDRING,
-    OPPHØR,
 }
 
 /**
@@ -145,23 +128,12 @@ private fun BehandlingDTO.tilBehandlingResponse() =
         ident = ident,
         opprettet = opprettet,
         sistEndret = sistEndret,
-        forslagOm = forslagOm.tilAvgjørelse(),
         avklaringer =
             avklaringer.map {
                 AvklaringSammendrag(kode = it.kode, begrunnelse = it.begrunnelse)
             },
         hendelseType = behandletHendelse.type.tilHendelseType(),
     )
-
-private fun AvgjørelseDTO.tilAvgjørelse(): Avgjørelse =
-    when (this) {
-        AvgjørelseDTO.INNVILGELSE -> Avgjørelse.INNVILGELSE
-        AvgjørelseDTO.AVSLAG -> Avgjørelse.AVSLAG
-        AvgjørelseDTO.STANS -> Avgjørelse.STANS
-        AvgjørelseDTO.GJENOPPTAK -> Avgjørelse.GJENOPPTAK
-        AvgjørelseDTO.ENDRING -> Avgjørelse.ENDRING
-        AvgjørelseDTO.OPPHØR -> Avgjørelse.OPPHØR
-    }
 
 private fun HendelseDTOTypeDTO.tilHendelseType(): HendelseType =
     when (this) {

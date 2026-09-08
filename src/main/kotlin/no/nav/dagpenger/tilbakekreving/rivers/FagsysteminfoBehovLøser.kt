@@ -9,9 +9,14 @@ import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.micrometer.core.instrument.MeterRegistry
 import kotlinx.coroutines.runBlocking
+import no.nav.dagpenger.tilbakekreving.FagsysteminfoSvar
+import no.nav.dagpenger.tilbakekreving.Mottaker
+import no.nav.dagpenger.tilbakekreving.MottakerType
+import no.nav.dagpenger.tilbakekreving.Revurdering
 import no.nav.dagpenger.tilbakekreving.RevurderingsinfoMapper
 import no.nav.dagpenger.tilbakekreving.behandling.BehandlingKlient
 import no.nav.dagpenger.tilbakekreving.kravgrunnlagReferanseTilBehandlingId
+import no.nav.dagpenger.tilbakekreving.toJson
 
 /**
  * Lytter på rapid-meldinger med `hendelsestype: fagsysteminfo_behov` (custom
@@ -65,27 +70,20 @@ internal class FagsysteminfoBehovLøser(
             val behandling = runBlocking { behandlingKlient.hentBehandling(behandlingId) }
 
             val svar =
-                mapOf(
-                    "hendelsestype" to HENDELSESTYPE_SVAR,
-                    "versjon" to VERSJON,
-                    "eksternFagsakId" to eksternFagsakId,
-                    "mottaker" to
-                        mapOf(
-                            "type" to "PERSON",
-                            "ident" to behandling.ident,
-                        ),
-                    "revurdering" to
-                        mapOf(
-                            "behandlingId" to behandlingId.toString(),
-                            "årsak" to revurderingsinfoMapper.årsak(behandling),
-                            "årsakTilFeilutbetaling" to revurderingsinfoMapper.årsakTilFeilutbetaling(behandling),
-                            "vedtaksdato" to revurderingsinfoMapper.vedtaksdato(behandling).toString(),
-                            "utvidPerioder" to null,
+                FagsysteminfoSvar(
+                    eksternFagsakId = eksternFagsakId,
+                    mottaker = Mottaker(type = MottakerType.PERSON, ident = behandling.ident),
+                    revurdering =
+                        Revurdering(
+                            behandlingId = behandlingId,
+                            årsak = revurderingsinfoMapper.årsak(behandling),
+                            årsakTilFeilutbetaling = revurderingsinfoMapper.årsakTilFeilutbetaling(behandling),
+                            vedtaksdato = revurderingsinfoMapper.vedtaksdato(behandling),
                         ),
                 )
 
             log.info { "Publiserer $HENDELSESTYPE_SVAR" }
-            context.publish(JsonMessage.newMessage(svar).toJson())
+            context.publish(svar.toJson())
         }
     }
 }
