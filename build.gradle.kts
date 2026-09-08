@@ -1,0 +1,28 @@
+plugins {
+    id("common")
+    application
+}
+
+application {
+    mainClass.set("no.nav.dagpenger.tilbakekreving.AppKt")
+}
+
+val dpBibliotekerVersjon = "2026.05.04-11.00.ccf523d33b63"
+
+dependencies {
+    implementation(project(":openapi"))
+    implementation(libs.rapids.and.rivers)
+    implementation(libs.ktor.client.cio)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.jackson)
+    implementation(libs.bundles.jackson)
+    implementation("no.nav.dagpenger:oauth2-klient:$dpBibliotekerVersjon")
+    implementation(libs.konfig)
+    implementation(libs.kotlin.logging)
+    runtimeOnly(libs.logback.classic)
+
+    testImplementation(libs.mockk)
+    testImplementation(libs.ktor.client.mock)
+    testImplementation(libs.rapids.and.rivers.test)
+    testImplementation(libs.bundles.kotest.assertions)
+}
