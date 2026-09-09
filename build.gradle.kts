@@ -7,7 +7,7 @@ application {
     mainClass.set("no.nav.dagpenger.tilbakekreving.AppKt")
 }
 
-val dpBibliotekerVersjon = "2026.05.04-11.00.ccf523d33b63"
+val dpBibliotekerVersjon = "2026.09.07-18.17.25c71da69269"
 
 dependencies {
     implementation(project(":openapi"))
