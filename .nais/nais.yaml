@@ -42,6 +42,8 @@ spec:
   accessPolicy:
     outbound:
       rules:
+        - application: logging
+          namespace: nais-system
         - application: dp-behandling
   observability:
     logging:
