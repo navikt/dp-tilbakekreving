@@ -8,10 +8,10 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.http.HttpHeaders
 import io.ktor.serialization.jackson3.jackson
 import no.nav.dagpenger.tilbakekreving.behandling.api.client.ApiConfiguration
-import no.nav.dagpenger.tilbakekreving.behandling.api.client.BehandlingClient
+import no.nav.dagpenger.tilbakekreving.behandling.api.client.BehandlingBehandlingsresultatClient
 import no.nav.dagpenger.tilbakekreving.behandling.api.client.NetworkError
 import no.nav.dagpenger.tilbakekreving.behandling.api.client.NetworkResult
-import no.nav.dagpenger.tilbakekreving.behandling.api.models.BehandlingDTO
+import no.nav.dagpenger.tilbakekreving.behandling.api.models.BehandlingsresultatDTO
 import no.nav.dagpenger.tilbakekreving.behandling.api.models.HendelseDTOTypeDTO
 import tools.jackson.databind.DeserializationFeature
 import java.io.Closeable
@@ -30,7 +30,6 @@ data class BehandlingResponse(
     val behandlingId: UUID,
     val ident: String,
     val sistEndret: LocalDateTime,
-    val avklaringer: List<AvklaringSammendrag> = emptyList(),
     val hendelseType: HendelseType? = null,
 )
 
@@ -85,7 +84,7 @@ class BehandlingHttpKlient(
     private val httpClient: HttpClient = nyHttpClient(),
 ) : BehandlingKlient,
     Closeable {
-    private val behandlingClient = BehandlingClient(httpClient)
+    private val behandlingClient = BehandlingBehandlingsresultatClient(httpClient)
 
     override suspend fun hentBehandling(behandlingId: UUID): BehandlingResponse {
         val apiConfiguration =
@@ -124,15 +123,11 @@ class BehandlingHttpKlient(
  * holde seg på ett abstraksjonsnivå (kall + resultathåndtering), ikke
  * felt-for-felt-mapping.
  */
-private fun BehandlingDTO.tilBehandlingResponse() =
+private fun BehandlingsresultatDTO.tilBehandlingResponse() =
     BehandlingResponse(
         behandlingId = behandlingId,
         ident = ident,
         sistEndret = sistEndret,
-        avklaringer =
-            avklaringer.map {
-                AvklaringSammendrag(begrunnelse = it.begrunnelse)
-            },
         hendelseType = behandletHendelse.type.tilHendelseType(),
     )
 

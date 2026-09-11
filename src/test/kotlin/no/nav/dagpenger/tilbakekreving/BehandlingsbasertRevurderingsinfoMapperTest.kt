@@ -20,7 +20,6 @@ internal class BehandlingsbasertRevurderingsinfoMapperTest {
         ident = "11109233444",
         sistEndret = sistEndret,
         hendelseType = hendelseType,
-        avklaringer = avklaringer,
     )
 
     @Test

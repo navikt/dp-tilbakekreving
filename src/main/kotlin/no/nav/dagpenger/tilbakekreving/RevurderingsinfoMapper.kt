@@ -62,17 +62,8 @@ class BehandlingsbasertRevurderingsinfoMapper : RevurderingsinfoMapper {
         return årsak.name
     }
 
-    override fun årsakTilFeilutbetaling(behandling: BehandlingResponse): String {
-        val begrunnelse = behandling.avklaringer.firstNotNullOfOrNull { it.begrunnelse }
-        if (begrunnelse == null) {
-            log.warn {
-                "Fant ingen avklaring med begrunnelse for behandlingId=${behandling.behandlingId} — " +
-                    "kan ikke utlede årsakTilFeilutbetaling fra avklaringer."
-            }
-        }
-        return begrunnelse
-            ?: "Ingen begrunnelse funnet i avklaringer for behandlingId=${behandling.behandlingId}"
-    }
+    override fun årsakTilFeilutbetaling(behandling: BehandlingResponse): String =
+        "Ingen begrunnelse funnet for behandlingId=${behandling.behandlingId}"
 
     override fun vedtaksdato(behandling: BehandlingResponse): LocalDate = behandling.sistEndret.toLocalDate()
 }
