@@ -3,11 +3,11 @@ package no.nav.dagpenger.tilbakekreving.rivers
 import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
 import com.github.navikt.tbd_libs.rapids_and_rivers.River
 import com.github.navikt.tbd_libs.rapids_and_rivers.asLocalDateTime
-import com.github.navikt.tbd_libs.rapids_and_rivers.withMDC
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageContext
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageMetadata
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
 import io.github.oshai.kotlinlogging.KotlinLogging
+import io.github.oshai.kotlinlogging.withLoggingContext
 import io.micrometer.core.instrument.MeterRegistry
 import kotlinx.coroutines.runBlocking
 import no.nav.dagpenger.tilbakekreving.FagsysteminfoSvar
@@ -63,10 +63,15 @@ internal class FagsysteminfoBehovLøser(
     ) {
         log.info { "Mottok $HENDELSESTYPE_BEHOV" }
         val eksternFagsakId = packet["eksternFagsakId"].asString()
+        val kravgrunnlagReferanse = packet["kravgrunnlagReferanse"].asString()
 
-        val behandlingId = dekodeBehandlingId(packet, eksternFagsakId) ?: return
+        val behandlingId = dekodeBehandlingId(packet, kravgrunnlagReferanse) ?: return
 
-        withMDC(mapOf("eksternFagsakId" to eksternFagsakId, "behandlingId" to behandlingId.toString())) {
+        withLoggingContext(
+            "eksternFagsakId" to eksternFagsakId,
+            "kravgrunnlagReferanse" to kravgrunnlagReferanse,
+            "behandlingId" to behandlingId.toString(),
+        ) {
             val behandling = runBlocking { behandlingKlient.hentBehandling(behandlingId) }
             val svar = byggSvar(eksternFagsakId, behandlingId, behandling)
             publiser(svar, context)
