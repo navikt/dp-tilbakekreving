@@ -18,11 +18,7 @@ internal class ApplicationBuilder(
     private val behandlingKlient =
         BehandlingHttpKlient(
             url = Config.dpBehandlingApiUrl,
-            tokenSupplier = {
-                Config.dpBehandlingTokenProvider
-                    .clientCredentials(Config.dpBehandlingScope)
-                    .access_token ?: throw RuntimeException("Kunne ikke hente token")
-            },
+            tokenSupplier = { Config.dpBehandlingTokenClient.hentToken() },
         )
 
     private val rapidsConnection =

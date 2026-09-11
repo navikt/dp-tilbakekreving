@@ -80,7 +80,7 @@ class BehandlingKlientException(
  */
 class BehandlingHttpKlient(
     private val url: String,
-    private val tokenSupplier: () -> String,
+    private val tokenSupplier: suspend () -> String,
     private val httpClient: HttpClient = nyHttpClient(),
 ) : BehandlingKlient,
     Closeable {

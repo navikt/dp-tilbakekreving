@@ -8,8 +8,7 @@ import com.natpryce.konfig.Key
 import com.natpryce.konfig.booleanType
 import com.natpryce.konfig.overriding
 import com.natpryce.konfig.stringType
-import no.nav.dagpenger.oauth2.CachedOauth2Client
-import no.nav.dagpenger.oauth2.OAuth2Config
+import no.nav.dagpenger.tilbakekreving.auth.NaisTokenClient
 
 internal object Config {
     private val defaultProperties =
@@ -42,11 +41,10 @@ internal object Config {
 
     val dpBehandlingApiUrl by lazy { properties[Key("DP_BEHANDLING_API_URL", stringType)] }
 
-    val dpBehandlingTokenProvider by lazy {
-        val azureAd = OAuth2Config.AzureAd(properties)
-        CachedOauth2Client(
-            tokenEndpointUrl = azureAd.tokenEndpointUrl,
-            authType = azureAd.clientSecret(),
+    val dpBehandlingTokenClient by lazy {
+        NaisTokenClient(
+            tokenEndpoint = properties[Key("NAIS_TOKEN_ENDPOINT", stringType)],
+            target = dpBehandlingScope,
         )
     }
 

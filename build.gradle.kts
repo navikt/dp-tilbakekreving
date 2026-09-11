@@ -7,8 +7,6 @@ application {
     mainClass.set("no.nav.dagpenger.tilbakekreving.AppKt")
 }
 
-val dpBibliotekerVersjon = "2026.09.07-18.17.25c71da69269"
-
 dependencies {
     implementation(project(":openapi"))
     implementation(libs.rapids.and.rivers)
@@ -16,7 +14,6 @@ dependencies {
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.jackson)
     implementation(libs.bundles.jackson)
-    implementation("no.nav.dagpenger:oauth2-klient:$dpBibliotekerVersjon")
     implementation(libs.konfig)
     implementation(libs.kotlin.logging)
     runtimeOnly(libs.logback.classic)
