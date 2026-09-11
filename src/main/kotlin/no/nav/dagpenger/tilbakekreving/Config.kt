@@ -18,7 +18,7 @@ internal object Config {
                 "KAFKA_CONSUMER_GROUP_ID" to "dp-tilbakekreving-beta1",
                 "KAFKA_RAPID_TOPIC" to "tilbake.privat-tilbakekreving-dagpenger",
                 "KAFKA_RESET_POLICY" to "earliest",
-                "DP_BEHANDLING_SCOPE" to "dev-gcp:teamdagpenger:dp-behandling",
+                "DP_BEHANDLING_SCOPE" to "api://dev-gcp.teamdagpenger.dp-behandling/.default",
                 "DP_BEHANDLING_API_URL" to "http://dp-behandling",
                 "DRY_RUN" to "false",
             ),
@@ -26,7 +26,7 @@ internal object Config {
     private val prodProperties =
         ConfigurationMap(
             mapOf(
-                "DP_BEHANDLING_SCOPE" to "prod-gcp:teamdagpenger:dp-behandling",
+                "DP_BEHANDLING_SCOPE" to "api://prod-gcp.teamdagpenger.dp-behandling/.default",
             ),
         )
 
