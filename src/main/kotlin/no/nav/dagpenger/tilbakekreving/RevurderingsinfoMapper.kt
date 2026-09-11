@@ -46,8 +46,11 @@ class BehandlingsbasertRevurderingsinfoMapper : RevurderingsinfoMapper {
                 HendelseType.KLAGE_KLAGEINSTANS,
                 HendelseType.KLAGE_TRYGDERETTEN,
                 -> RevurderingÅrsak.KLAGE
+
                 HendelseType.MELDEKORT -> RevurderingÅrsak.KORRIGERING
+
                 HendelseType.OMGJØRING -> RevurderingÅrsak.NYE_OPPLYSNINGER
+
                 HendelseType.SØKNAD,
                 HendelseType.MANUELL,
                 HendelseType.ARBEIDSSØKERPERIODE,

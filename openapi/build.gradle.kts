@@ -1,9 +1,11 @@
+import de.undercouch.gradle.tasks.download.Download
+
 plugins {
-    id("ch.acanda.gradle.fabrikt") version "1.40.0"
     id("common")
     `java-library`
+    id("ch.acanda.gradle.fabrikt") version "1.40.0"
+    id("de.undercouch.download") version "5.7.0"
 }
-
 tasks {
     compileKotlin {
         dependsOn("fabriktGenerateBehandling")
@@ -39,9 +41,19 @@ dependencies {
     implementation(libs.ktor.serialization.jackson)
 }
 
+val apiSpecFile = layout.buildDirectory.file("tmp/behandling-api.yaml")
+
+val hentOpenAPI by tasks.register<Download>("hentOpenAPI") {
+    src("https://raw.githubusercontent.com/navikt/dp-behandling/refs/heads/main/openapi/src/main/resources/behandling-api.yaml")
+    dest(apiSpecFile)
+    overwrite(true)
+    group = "openapi"
+    description = "Henter OpenAPI spesifikasjonen fra github og lagrer den lokalt"
+}
+
 fabrikt {
     generate("behandling") {
-        apiFile = file("$projectDir/src/main/resources/behandling-api.yaml")
+        apiFile = apiSpecFile
         basePackage = "no.nav.dagpenger.tilbakekreving.behandling.api"
         skip = false
         quarkusReflectionConfig = disabled
