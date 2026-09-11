@@ -34,11 +34,6 @@ spec:
     requests:
       cpu: 20m
       memory: 256Mi
-  env:
-    - name: DRY_RUN
-      value: "true"
-    - name: KAFKA_CONSUMER_GROUP_ID
-      value: dp-tilbakekreving-beta3
   kafka:
     pool: "{{ kafka.pool }}"
   azure:

@@ -14,9 +14,9 @@ internal object Config {
     private val defaultProperties =
         ConfigurationMap(
             mapOf(
-                "KAFKA_CONSUMER_GROUP_ID" to "dp-tilbakekreving-beta1",
+                "KAFKA_CONSUMER_GROUP_ID" to "dp-tilbakekreving-v1",
                 "KAFKA_RAPID_TOPIC" to "tilbake.privat-tilbakekreving-dagpenger",
-                "KAFKA_RESET_POLICY" to "earliest",
+                "KAFKA_RESET_POLICY" to "latest",
                 "DP_BEHANDLING_SCOPE" to "api://dev-gcp.teamdagpenger.dp-behandling/.default",
                 "DP_BEHANDLING_API_URL" to "http://dp-behandling",
                 "DRY_RUN" to "false",
