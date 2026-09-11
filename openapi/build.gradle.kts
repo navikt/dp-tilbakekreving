@@ -1,23 +1,13 @@
 import de.undercouch.gradle.tasks.download.Download
+import jdk.internal.org.commonmark.text.Characters.skip
+import jdk.jfr.internal.JVM.exclude
+import java.time.LocalDateTime
 
 plugins {
     id("common")
     `java-library`
     id("ch.acanda.gradle.fabrikt") version "1.40.0"
     id("de.undercouch.download") version "5.7.0"
-}
-tasks {
-    compileKotlin {
-        dependsOn("fabriktGenerateBehandling")
-    }
-}
-
-tasks.named("runKtlintCheckOverMainSourceSet").configure {
-    dependsOn("fabriktGenerateBehandling")
-}
-
-tasks.named("runKtlintFormatOverMainSourceSet").configure {
-    dependsOn("fabriktGenerateBehandling")
 }
 
 sourceSets {
@@ -49,6 +39,21 @@ val hentOpenAPI by tasks.register<Download>("hentOpenAPI") {
     overwrite(true)
     group = "openapi"
     description = "Henter OpenAPI spesifikasjonen fra github og lagrer den lokalt"
+}
+
+tasks {
+    runKtlintCheckOverMainSourceSet {
+        dependsOn(fabriktGenerate)
+    }
+    runKtlintFormatOverMainSourceSet {
+        dependsOn(fabriktGenerate)
+    }
+    compileKotlin {
+        dependsOn(fabriktGenerate)
+    }
+    fabriktGenerate {
+        dependsOn(hentOpenAPI)
+    }
 }
 
 fabrikt {
