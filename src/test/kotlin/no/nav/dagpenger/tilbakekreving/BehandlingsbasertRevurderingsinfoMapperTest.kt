@@ -1,7 +1,6 @@
 package no.nav.dagpenger.tilbakekreving
 
 import io.kotest.matchers.shouldBe
-import no.nav.dagpenger.tilbakekreving.behandling.AvklaringSammendrag
 import no.nav.dagpenger.tilbakekreving.behandling.BehandlingResponse
 import no.nav.dagpenger.tilbakekreving.behandling.HendelseType
 import org.junit.jupiter.api.Test
@@ -13,7 +12,6 @@ internal class BehandlingsbasertRevurderingsinfoMapperTest {
 
     private fun behandling(
         hendelseType: HendelseType? = null,
-        avklaringer: List<AvklaringSammendrag> = emptyList(),
         sistEndret: LocalDateTime = LocalDateTime.parse("2026-01-12T10:00:00"),
     ) = BehandlingResponse(
         behandlingId = UUID.randomUUID(),
@@ -50,27 +48,11 @@ internal class BehandlingsbasertRevurderingsinfoMapperTest {
     }
 
     @Test
-    fun `henter foerste ikke-null begrunnelse fra avklaringer som aarsakTilFeilutbetaling`() {
-        val behandling =
-            behandling(
-                avklaringer =
-                    listOf(
-                        AvklaringSammendrag(begrunnelse = null),
-                        AvklaringSammendrag(begrunnelse = "Bruker sluttet på tiltaket"),
-                        AvklaringSammendrag(begrunnelse = "En annen begrunnelse"),
-                    ),
-            )
-        mapper.årsakTilFeilutbetaling(behandling) shouldBe "Bruker sluttet på tiltaket"
-    }
-
-    @Test
     fun `gir en tydelig fallback naar ingen avklaringer har begrunnelse`() {
         val behandling =
-            behandling(
-                avklaringer = listOf(AvklaringSammendrag(begrunnelse = null)),
-            )
+            behandling()
         mapper.årsakTilFeilutbetaling(behandling) shouldBe
-            "Ingen begrunnelse funnet i avklaringer for behandlingId=${behandling.behandlingId}"
+            "Ingen begrunnelse funnet for behandlingId=${behandling.behandlingId}"
     }
 
     @Test

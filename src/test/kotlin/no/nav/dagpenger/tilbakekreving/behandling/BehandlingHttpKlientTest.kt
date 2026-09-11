@@ -43,7 +43,7 @@ internal class BehandlingHttpKlientTest {
 
         runBlocking { klient.hentBehandling(behandlingId) }
 
-        mottattUrl shouldBe "http://dp-behandling/behandling/$behandlingId"
+        mottattUrl shouldBe "http://dp-behandling/behandling/$behandlingId/behandlingsresultat"
         mottattAuthHeader shouldBe "Bearer $token"
     }
 
@@ -115,11 +115,12 @@ internal class BehandlingHttpKlientTest {
           "sistEndret": "2026-01-12T10:00:00",
           "kreverTotrinnskontroll": false,
           "tilstand": "Ferdig",
-          "avklaringer": [],
           "vilkår": [],
           "fastsettelser": [],
           "opplysninger": [],
-          "forslagOm": "Innvilgelse"
+          "utbetalinger": [],
+          "behandletAv": [],
+          "førteTil": "Endring"
         }
         """.trimIndent()
 }
