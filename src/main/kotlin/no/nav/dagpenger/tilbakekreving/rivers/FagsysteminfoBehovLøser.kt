@@ -92,8 +92,10 @@ internal class FagsysteminfoBehovLøser(
             kravgrunnlagReferanseTilBehandlingId(kravgrunnlagReferanse)
         } catch (e: IllegalArgumentException) {
             log.warn(e) {
-                "Klarte ikke å dekode kravgrunnlagReferanse til en gyldig behandlingId " +
-                    "for eksternFagsakId=$eksternFagsakId, kravgrunnlagReferanse=$kravgrunnlagReferanse. Forkaster meldingen."
+                """Klarte ikke å dekode kravgrunnlagReferanse til en gyldig behandlingId for 
+                |eksternFagsakId=$eksternFagsakId, kravgrunnlagReferanse=$kravgrunnlagReferanse. Forkaster meldingen.
+                |Melding: ${packet.toJson()}
+                """.trimMargin()
             }
             null
         }
