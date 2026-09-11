@@ -65,7 +65,7 @@ internal class FagsysteminfoBehovLøser(
         val eksternFagsakId = packet["eksternFagsakId"].asString()
         val kravgrunnlagReferanse = packet["kravgrunnlagReferanse"].asString()
 
-        val behandlingId = dekodeBehandlingId(packet, kravgrunnlagReferanse) ?: return
+        val behandlingId = dekodeBehandlingId(packet, eksternFagsakId) ?: return
 
         withLoggingContext(
             "eksternFagsakId" to eksternFagsakId,
@@ -93,7 +93,7 @@ internal class FagsysteminfoBehovLøser(
         } catch (e: IllegalArgumentException) {
             log.warn(e) {
                 "Klarte ikke å dekode kravgrunnlagReferanse til en gyldig behandlingId " +
-                    "for eksternFagsakId=$eksternFagsakId. Forkaster meldingen."
+                    "for eksternFagsakId=$eksternFagsakId, kravgrunnlagReferanse=$kravgrunnlagReferanse. Forkaster meldingen."
             }
             null
         }
