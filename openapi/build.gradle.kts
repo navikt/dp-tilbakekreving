@@ -1,6 +1,4 @@
 import de.undercouch.gradle.tasks.download.Download
-import jdk.internal.org.commonmark.text.Characters.skip
-import jdk.jfr.internal.JVM.exclude
 import java.time.LocalDateTime
 
 plugins {
