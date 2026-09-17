@@ -38,7 +38,7 @@ spec:
     pool: "{{ kafka.pool }}"
   env:
     - name: KAFKA_CONSUMER_GROUP_ID
-      value: "dp-tilbakekreving-v2"
+      value: "dp-tilbakekreving-v3"
     - name: KAFKA_RESET_POLICY
       value: "earliest"
     - name: ANSVARLIG_ENHET
