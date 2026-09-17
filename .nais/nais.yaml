@@ -37,6 +37,10 @@ spec:
   kafka:
     pool: "{{ kafka.pool }}"
   env:
+    - name: KAFKA_CONSUMER_GROUP_ID
+      value: "dp-tilbakekreving-v2"
+    - name: KAFKA_RESET_POLICY
+      value: "earliest"
     - name: ANSVARLIG_ENHET
       value: "4449"
   azure:
