@@ -69,6 +69,7 @@ internal class FagsysteminfoBehovLøser(
             "kravgrunnlagReferanse" to kravgrunnlagReferanse,
             "behandlingId" to behandlingId.toString(),
         ) {
+            log.info { "Svarer ut $HENDELSESTYPE_BEHOV" }
             val behandling = runBlocking { behandlingKlient.hentBehandling(behandlingId) }
             val svar = byggSvar(eksternFagsakId, behandlingId, behandling)
             publiser(svar, context)
