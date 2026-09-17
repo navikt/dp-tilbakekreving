@@ -5,7 +5,7 @@ import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
-import no.nav.dagpenger.tilbakekreving.AnsvarligEnhetMapper
+import no.nav.dagpenger.tilbakekreving.BehandlendeEnhetOppslag
 import no.nav.dagpenger.tilbakekreving.Enhet
 import no.nav.dagpenger.tilbakekreving.RevurderingsinfoMapper
 import no.nav.dagpenger.tilbakekreving.behandling.BehandlingKlient
@@ -41,14 +41,14 @@ internal class FagsysteminfoBehovLøserTest {
             every { it.vedtaksdato(behandlingResponse) } returns LocalDate.of(2026, 1, 12)
         }
 
-    private val ansvarligEnhetMapper: AnsvarligEnhetMapper =
-        mockk<AnsvarligEnhetMapper>().also {
-            every { it.ansvarligEnhet(forventetBehandlingId) } returns Enhet("4449")
+    private val behandlendeEnhetOppslag: BehandlendeEnhetOppslag =
+        mockk<BehandlendeEnhetOppslag>().also {
+            every { it.behandlendeEnhet(forventetBehandlingId) } returns Enhet("4449")
         }
 
     private val testRapid =
         TestRapid().also {
-            FagsysteminfoBehovLøser(it, behandlingKlient, revurderingsinfoMapper, ansvarligEnhetMapper)
+            FagsysteminfoBehovLøser(it, behandlingKlient, revurderingsinfoMapper, behandlendeEnhetOppslag)
         }
 
     @Test
@@ -68,7 +68,7 @@ internal class FagsysteminfoBehovLøserTest {
         svar["revurdering"]["årsak"].asString() shouldBe "TEST_ÅRSAK"
         svar["revurdering"]["årsakTilFeilutbetaling"].asString() shouldBe "TEST_ÅRSAK_TIL_FEILUTBETALING"
         svar["revurdering"]["vedtaksdato"].asString() shouldBe "2026-01-12"
-        svar["ansvarligEnhet"].asString() shouldBe "4449"
+        svar["behandlendeEnhet"].asString() shouldBe "4449"
     }
 
     @Test

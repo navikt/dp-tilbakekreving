@@ -11,18 +11,18 @@ data class Enhet(
 
 /**
  * Kapsler utledningen av ansvarlig enhet for en behandling. Injiseres slik at
- * mappingen kan gå fra en statisk verdi (se [StatiskAnsvarligEnhetMapper]) til
+ * mappingen kan gå fra en statisk verdi (se [StatiskBehandlendeEnhetOppslag]) til
  * f.eks. et oppslag mot et annet system, uten å røre River-koden.
  */
-interface AnsvarligEnhetMapper {
-    fun ansvarligEnhet(behandlingId: UUID): Enhet
+interface BehandlendeEnhetOppslag {
+    fun behandlendeEnhet(behandlingId: UUID): Enhet
 }
 
 /**
  * Foreløpig løsning: alle behandlinger får samme, konfigurerte enhet.
  */
-class StatiskAnsvarligEnhetMapper(
+class StatiskBehandlendeEnhetOppslag(
     private val enhet: Enhet = Enhet(Config.ansvarligEnhet),
-) : AnsvarligEnhetMapper {
-    override fun ansvarligEnhet(behandlingId: UUID): Enhet = enhet
+) : BehandlendeEnhetOppslag {
+    override fun behandlendeEnhet(behandlingId: UUID): Enhet = enhet
 }

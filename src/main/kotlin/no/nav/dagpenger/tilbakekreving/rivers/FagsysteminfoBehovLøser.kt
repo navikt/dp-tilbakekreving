@@ -10,7 +10,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.oshai.kotlinlogging.withLoggingContext
 import io.micrometer.core.instrument.MeterRegistry
 import kotlinx.coroutines.runBlocking
-import no.nav.dagpenger.tilbakekreving.AnsvarligEnhetMapper
+import no.nav.dagpenger.tilbakekreving.BehandlendeEnhetOppslag
 import no.nav.dagpenger.tilbakekreving.FagsysteminfoSvar
 import no.nav.dagpenger.tilbakekreving.Mottaker
 import no.nav.dagpenger.tilbakekreving.MottakerType
@@ -32,7 +32,7 @@ internal class FagsysteminfoBehovLøser(
     rapidsConnection: RapidsConnection,
     private val behandlingKlient: BehandlingKlient,
     private val revurderingsinfoMapper: RevurderingsinfoMapper,
-    private val ansvarligEnhetMapper: AnsvarligEnhetMapper,
+    private val behandlendeEnhetOppslag: BehandlendeEnhetOppslag,
 ) : River.PacketListener {
     companion object {
         private const val HENDELSESTYPE_BEHOV = "fagsysteminfo_behov"
@@ -115,7 +115,7 @@ internal class FagsysteminfoBehovLøser(
                 årsakTilFeilutbetaling = revurderingsinfoMapper.årsakTilFeilutbetaling(behandling),
                 vedtaksdato = revurderingsinfoMapper.vedtaksdato(behandling),
             ),
-        ansvarligEnhet = ansvarligEnhetMapper.ansvarligEnhet(behandlingId).id,
+        behandlendeEnhet = behandlendeEnhetOppslag.behandlendeEnhet(behandlingId).id,
     )
 
     private fun publiser(

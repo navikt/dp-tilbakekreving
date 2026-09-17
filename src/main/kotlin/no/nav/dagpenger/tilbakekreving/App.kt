@@ -29,7 +29,7 @@ internal class ApplicationBuilder(
                     rapidsConnection = this,
                     behandlingKlient = behandlingKlient,
                     revurderingsinfoMapper = BehandlingsbasertRevurderingsinfoMapper(),
-                    ansvarligEnhetMapper = StatiskAnsvarligEnhetMapper(),
+                    behandlendeEnhetOppslag = StatiskBehandlendeEnhetOppslag(),
                 )
             }
 
