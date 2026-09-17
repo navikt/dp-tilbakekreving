@@ -26,21 +26,18 @@ import java.util.UUID
  * Lytter på rapid-meldinger med `hendelsestype: fagsysteminfo_behov` (custom
  * felt, IKKE @event_name-konvensjonen), slår opp behandlingId hos
  * dp-behandling og publiserer `fagsysteminfo_svar`.
- *
- * Når [dryRun] er satt løses behovet og resultatet logges, men det publiseres
- * ikke noe svar - se [no.nav.dagpenger.tilbakekreving.Config.dryRun].
  */
 internal class FagsysteminfoBehovLøser(
     rapidsConnection: RapidsConnection,
     private val behandlingKlient: BehandlingKlient,
     private val revurderingsinfoMapper: RevurderingsinfoMapper,
-    private val dryRun: Boolean = false,
 ) : River.PacketListener {
     companion object {
         private const val HENDELSESTYPE_BEHOV = "fagsysteminfo_behov"
         private const val HENDELSESTYPE_SVAR = "fagsysteminfo_svar"
         private const val VERSJON = 1
         private val log = KotlinLogging.logger { }
+        private val sikkerlogg = KotlinLogging.logger("tjenestekall.FagsysteminfoBehovLøser")
     }
 
     init {
@@ -121,10 +118,7 @@ internal class FagsysteminfoBehovLøser(
         svar: FagsysteminfoSvar,
         context: MessageContext,
     ) {
-        if (dryRun) {
-            log.info { "DRY_RUN: publiserer ikke $HENDELSESTYPE_SVAR, ville sendt: ${svar.toJson()}" }
-            return
-        }
+        sikkerlogg.info { "Publiserer $HENDELSESTYPE_SVAR: ${svar.toJson()}" }
         log.info { "Publiserer $HENDELSESTYPE_SVAR" }
         context.publish(svar.toJson())
     }

@@ -29,7 +29,6 @@ internal class ApplicationBuilder(
                     rapidsConnection = this,
                     behandlingKlient = behandlingKlient,
                     revurderingsinfoMapper = BehandlingsbasertRevurderingsinfoMapper(),
-                    dryRun = Config.dryRun,
                 )
             }
 
@@ -40,7 +39,7 @@ internal class ApplicationBuilder(
     fun start() = rapidsConnection.start()
 
     override fun onStartup(rapidsConnection: RapidsConnection) {
-        logg.info { "Starter dp-tilbakekreving${if (Config.dryRun) " (DRY_RUN)" else ""}" }
+        logg.info { "Starter dp-tilbakekreving" }
     }
 
     override fun onShutdown(rapidsConnection: RapidsConnection) {
