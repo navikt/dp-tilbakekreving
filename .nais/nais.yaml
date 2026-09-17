@@ -36,6 +36,9 @@ spec:
       memory: 256Mi
   kafka:
     pool: "{{ kafka.pool }}"
+  env:
+    - name: ANSVARLIG_ENHET
+      value: "4449"
   azure:
     application:
       enabled: true

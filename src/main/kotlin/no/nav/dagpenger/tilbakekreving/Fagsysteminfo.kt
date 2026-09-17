@@ -13,6 +13,7 @@ data class FagsysteminfoSvar(
     val hendelseOpprettet: LocalDateTime = LocalDateTime.now(),
     val mottaker: Mottaker,
     val revurdering: Revurdering,
+    val ansvarligEnhet: String,
 )
 
 /**
@@ -30,6 +31,7 @@ fun FagsysteminfoSvar.toJson(): String =
                 "hendelseOpprettet" to hendelseOpprettet,
                 "mottaker" to mottaker,
                 "revurdering" to revurdering,
+                "ansvarligEnhet" to ansvarligEnhet,
             ),
         ).toJson()
 

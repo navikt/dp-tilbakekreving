@@ -18,6 +18,7 @@ internal object Config {
                 "KAFKA_RESET_POLICY" to "latest",
                 "DP_BEHANDLING_SCOPE" to "api://dev-gcp.teamdagpenger.dp-behandling/.default",
                 "DP_BEHANDLING_API_URL" to "http://dp-behandling",
+                "ANSVARLIG_ENHET" to "4449",
             ),
         )
     private val prodProperties =
@@ -38,6 +39,8 @@ internal object Config {
     val dpBehandlingScope by lazy { properties[Key("DP_BEHANDLING_SCOPE", stringType)] }
 
     val dpBehandlingApiUrl by lazy { properties[Key("DP_BEHANDLING_API_URL", stringType)] }
+
+    val ansvarligEnhet by lazy { properties[Key("ANSVARLIG_ENHET", stringType)] }
 
     val dpBehandlingTokenClient by lazy {
         NaisTokenClient(
