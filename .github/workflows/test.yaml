@@ -1,6 +1,7 @@
 name: Test PRs
 
 on:
+  merge_group: 
   push:
     branches:
       - 'dependabot/**'
