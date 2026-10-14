@@ -52,7 +52,7 @@ internal class BehandlingsbasertRevurderingsinfoMapperTest {
         val behandling =
             behandling()
         mapper.årsakTilFeilutbetaling(behandling) shouldBe
-            "Ingen begrunnelse funnet for behandlingId=${behandling.behandlingId}"
+            "Må fylles ut av saksbehandler"
     }
 
     @Test

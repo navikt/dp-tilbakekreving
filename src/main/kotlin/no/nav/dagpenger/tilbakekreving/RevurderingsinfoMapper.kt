@@ -62,8 +62,7 @@ class BehandlingsbasertRevurderingsinfoMapper : RevurderingsinfoMapper {
         return årsak.name
     }
 
-    override fun årsakTilFeilutbetaling(behandling: BehandlingResponse): String =
-        "Ingen begrunnelse funnet for behandlingId=${behandling.behandlingId}"
+    override fun årsakTilFeilutbetaling(behandling: BehandlingResponse): String = "Må fylles ut av saksbehandler"
 
     override fun vedtaksdato(behandling: BehandlingResponse): LocalDate = behandling.sistEndret.toLocalDate()
 }
