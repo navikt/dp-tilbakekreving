@@ -15,6 +15,7 @@ internal class BehandlingsbasertRevurderingsinfoMapperTest {
         sistEndret: LocalDateTime = LocalDateTime.parse("2026-01-12T10:00:00"),
     ) = BehandlingResponse(
         behandlingId = UUID.randomUUID(),
+        behandlingskjedeId = UUID.randomUUID(),
         ident = "11109233444",
         sistEndret = sistEndret,
         hendelseType = hendelseType,

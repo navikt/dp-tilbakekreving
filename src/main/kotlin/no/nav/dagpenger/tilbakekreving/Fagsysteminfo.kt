@@ -1,8 +1,10 @@
 package no.nav.dagpenger.tilbakekreving
 
 import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
+import java.nio.ByteBuffer
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.util.Base64
 import java.util.UUID
 
 // --- Utgående svar ---
@@ -10,6 +12,7 @@ data class FagsysteminfoSvar(
     val hendelsestype: String = "fagsysteminfo_svar",
     val versjon: Int = 1,
     val eksternFagsakId: String,
+    val fagsakId: UUID,
     val hendelseOpprettet: LocalDateTime = LocalDateTime.now(),
     val mottaker: Mottaker,
     val revurdering: Revurdering,
@@ -28,6 +31,7 @@ fun FagsysteminfoSvar.toJson(): String =
                 "hendelsestype" to hendelsestype,
                 "versjon" to versjon,
                 "eksternFagsakId" to eksternFagsakId,
+                "fagsakId" to fagsakId,
                 "hendelseOpprettet" to hendelseOpprettet,
                 "mottaker" to mottaker,
                 "revurdering" to revurdering,
@@ -64,19 +68,16 @@ data class Periode(
 )
 
 /**
- * Dekoder [kravgrunnlagReferanse] (base64 av 16 rå bytes) til en [UUID].
+ * Dekoder en base64-streng (16 rå bytes) til en [UUID]. Brukes for kravgrunnlagReferanse.
  *
  * Kaster [IllegalArgumentException] dersom strengen ikke er gyldig base64,
- * eller ikke inneholder nøyaktig 16 bytes (dvs. ikke kan tolkes som en UUID).
+ * eller ikke inneholder nøyaktig 16 bytes.
  */
-fun kravgrunnlagReferanseTilBehandlingId(kravgrunnlagReferanse: String): UUID {
-    val bytes =
-        java.util.Base64
-            .getDecoder()
-            .decode(kravgrunnlagReferanse)
+fun dekodeBase64TilUuid(base64: String): UUID {
+    val bytes = Base64.getDecoder().decode(base64)
     require(bytes.size == 16) {
-        "Forventet 16 bytes etter base64-dekoding av kravgrunnlagReferanse, fikk ${bytes.size}"
+        "Forventet 16 bytes etter base64-dekoding, fikk ${bytes.size}"
     }
-    val buffer = java.nio.ByteBuffer.wrap(bytes)
+    val buffer = ByteBuffer.wrap(bytes)
     return UUID(buffer.long, buffer.long)
 }

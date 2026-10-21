@@ -28,6 +28,7 @@ import java.util.UUID
  */
 data class BehandlingResponse(
     val behandlingId: UUID,
+    val behandlingskjedeId: UUID,
     val ident: String,
     val sistEndret: LocalDateTime,
     val hendelseType: HendelseType? = null,
@@ -126,6 +127,7 @@ class BehandlingHttpKlient(
 private fun BehandlingsresultatDTO.tilBehandlingResponse() =
     BehandlingResponse(
         behandlingId = behandlingId,
+        behandlingskjedeId = behandlingskjedeId,
         ident = ident,
         sistEndret = sistEndret,
         hendelseType = behandletHendelse.type.tilHendelseType(),
