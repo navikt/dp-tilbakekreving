@@ -19,7 +19,8 @@ internal class FagsysteminfoBehovLøserTest {
     // Samme eksempel som i ADR-en: base64 av 16 rå bytes som tolkes som UUID.
     private val kravgrunnlagReferanse = "EEio2tWRTS6BwG9FRfl6Zg=="
     private val forventetBehandlingId = UUID.fromString("1048a8da-d591-4d2e-81c0-6f4545f97a66")
-    private val eksternFagsakId = "4UA79Qo"
+    private val eksternFagsakId = "SIcFzJ55SwO5qx2d/CWOzg=="
+    private val forventetSakId = UUID.fromString("488705cc-9e79-4b03-b9ab-1d9dfc258ece")
     private val ident = "11109233444"
 
     private val behandlingResponse =
@@ -62,6 +63,7 @@ internal class FagsysteminfoBehovLøserTest {
         svar["hendelsestype"].asString() shouldBe "fagsysteminfo_svar"
         svar["versjon"].asString() shouldBe "1"
         svar["eksternFagsakId"].asString() shouldBe eksternFagsakId
+        svar["fagsakId"].asString() shouldBe forventetSakId.toString()
         svar["mottaker"]["type"].asString() shouldBe "PERSON"
         svar["mottaker"]["ident"].asString() shouldBe ident
         svar["revurdering"]["behandlingId"].asString() shouldBe forventetBehandlingId.toString()
