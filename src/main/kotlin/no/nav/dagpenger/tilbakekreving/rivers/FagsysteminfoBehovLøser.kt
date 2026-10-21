@@ -18,7 +18,7 @@ import no.nav.dagpenger.tilbakekreving.Revurdering
 import no.nav.dagpenger.tilbakekreving.RevurderingsinfoMapper
 import no.nav.dagpenger.tilbakekreving.behandling.BehandlingKlient
 import no.nav.dagpenger.tilbakekreving.behandling.BehandlingResponse
-import no.nav.dagpenger.tilbakekreving.kravgrunnlagReferanseTilBehandlingId
+import no.nav.dagpenger.tilbakekreving.dekodeBase64TilUuid
 import no.nav.dagpenger.tilbakekreving.toJson
 import tools.jackson.databind.JsonNode
 import java.util.UUID
@@ -48,8 +48,8 @@ internal class FagsysteminfoBehovLøser(
                 precondition { it.requireValue("hendelsestype", HENDELSESTYPE_BEHOV) }
                 precondition { it.requireValue("versjon", VERSJON) }
                 precondition { it.forbid("@løsning") }
-                validate { it.require("eksternFagsakId", JsonNode::asString) }
-                validate { it.require("kravgrunnlagReferanse", JsonNode::asString) }
+                validate { it.require("eksternFagsakId") { node -> dekodeBase64TilUuid(node.asString()) } }
+                validate { it.require("kravgrunnlagReferanse") { node -> dekodeBase64TilUuid(node.asString()) } }
                 validate { it.require("hendelseOpprettet", JsonNode::asLocalDateTime) }
             }.register(this)
     }
@@ -64,7 +64,8 @@ internal class FagsysteminfoBehovLøser(
         val eksternFagsakId = packet["eksternFagsakId"].asString()
         val kravgrunnlagReferanse = packet["kravgrunnlagReferanse"].asString()
 
-        val behandlingId = dekodeBehandlingId(packet, eksternFagsakId) ?: return
+        val fagsakId = dekodeBase64TilUuid(eksternFagsakId)
+        val behandlingId = dekodeBase64TilUuid(kravgrunnlagReferanse)
 
         withLoggingContext(
             "eksternFagsakId" to eksternFagsakId,
@@ -73,40 +74,17 @@ internal class FagsysteminfoBehovLøser(
         ) {
             log.info { "Svarer ut $HENDELSESTYPE_BEHOV" }
             val behandling = runBlocking { behandlingKlient.hentBehandling(behandlingId) }
-            val svar = byggSvar(eksternFagsakId, behandlingId, behandling)
+            val svar = byggSvar(fagsakId, behandlingId, behandling)
             publiser(svar, context)
         }
     }
 
-    /**
-     * Dekoder `kravgrunnlagReferanse` til en behandlingId. Returnerer null (og
-     * forkaster meldingen) dersom referansen ikke er gyldig base64/UUID -
-     * dette regnes som en varig, ikke-reprosesserbar feil.
-     */
-    private fun dekodeBehandlingId(
-        packet: JsonMessage,
-        eksternFagsakId: String,
-    ): UUID? {
-        val kravgrunnlagReferanse = packet["kravgrunnlagReferanse"].asString()
-        return try {
-            kravgrunnlagReferanseTilBehandlingId(kravgrunnlagReferanse)
-        } catch (e: IllegalArgumentException) {
-            log.warn(e) {
-                """Klarte ikke å dekode kravgrunnlagReferanse til en gyldig behandlingId for 
-                |eksternFagsakId=$eksternFagsakId, kravgrunnlagReferanse=$kravgrunnlagReferanse. Forkaster meldingen.
-                |Melding: ${packet.toJson()}
-                """.trimMargin()
-            }
-            null
-        }
-    }
-
     private fun byggSvar(
-        eksternFagsakId: String,
+        fagsakId: UUID,
         behandlingId: UUID,
         behandling: BehandlingResponse,
     ) = FagsysteminfoSvar(
-        eksternFagsakId = eksternFagsakId,
+        eksternFagsakId = fagsakId,
         mottaker = Mottaker(type = MottakerType.PERSON, ident = behandling.ident),
         revurdering =
             Revurdering(
