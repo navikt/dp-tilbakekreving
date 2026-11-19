@@ -49,6 +49,7 @@ enum class HendelseType {
     KLAGE_FØRSTEINSTANS,
     KLAGE_KLAGEINSTANS,
     KLAGE_TRYGDERETTEN,
+    MIGRERING,
 }
 
 /**
@@ -143,4 +144,5 @@ private fun HendelseDTOTypeDTO.tilHendelseType(): HendelseType =
         HendelseDTOTypeDTO.KLAGE_FØRSTEINSTANS -> HendelseType.KLAGE_FØRSTEINSTANS
         HendelseDTOTypeDTO.KLAGE_KLAGEINSTANS -> HendelseType.KLAGE_KLAGEINSTANS
         HendelseDTOTypeDTO.KLAGE_TRYGDERETTEN -> HendelseType.KLAGE_TRYGDERETTEN
+        HendelseDTOTypeDTO.MIGRERING -> HendelseType.MIGRERING
     }

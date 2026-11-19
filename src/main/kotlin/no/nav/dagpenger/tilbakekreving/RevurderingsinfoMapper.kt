@@ -51,6 +51,7 @@ class BehandlingsbasertRevurderingsinfoMapper : RevurderingsinfoMapper {
 
                 HendelseType.OMGJØRING -> RevurderingÅrsak.NYE_OPPLYSNINGER
 
+                HendelseType.MIGRERING,
                 HendelseType.SØKNAD,
                 HendelseType.MANUELL,
                 HendelseType.ARBEIDSSØKERPERIODE,
