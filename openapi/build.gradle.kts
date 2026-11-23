@@ -69,7 +69,7 @@ fabrikt {
             extensibleEnums = disabled
             ignoreUnknownProperties = disabled
             nonNullMapValues = enabled
-            serializationLibrary = Jackson2
+            serializationLibrary = Jackson3
             suffix = "DTO"
         }
         client {
