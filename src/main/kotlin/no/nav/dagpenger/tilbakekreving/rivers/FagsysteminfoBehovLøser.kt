@@ -16,9 +16,9 @@ import no.nav.dagpenger.tilbakekreving.Mottaker
 import no.nav.dagpenger.tilbakekreving.MottakerType
 import no.nav.dagpenger.tilbakekreving.Revurdering
 import no.nav.dagpenger.tilbakekreving.RevurderingsinfoMapper
+import no.nav.dagpenger.tilbakekreving.base64TilUuid
 import no.nav.dagpenger.tilbakekreving.behandling.BehandlingKlient
 import no.nav.dagpenger.tilbakekreving.behandling.BehandlingResponse
-import no.nav.dagpenger.tilbakekreving.kravgrunnlagReferanseTilBehandlingId
 import no.nav.dagpenger.tilbakekreving.toJson
 import tools.jackson.databind.JsonNode
 import java.util.UUID
@@ -89,7 +89,7 @@ internal class FagsysteminfoBehovLøser(
     ): UUID? {
         val kravgrunnlagReferanse = packet["kravgrunnlagReferanse"].asString()
         return try {
-            kravgrunnlagReferanseTilBehandlingId(kravgrunnlagReferanse)
+            base64TilUuid(kravgrunnlagReferanse)
         } catch (e: IllegalArgumentException) {
             log.warn(e) {
                 """Klarte ikke å dekode kravgrunnlagReferanse til en gyldig behandlingId for 

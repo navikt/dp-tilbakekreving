@@ -14,7 +14,7 @@ internal class KravgrunnlagReferanseTest {
         val referanse = "EEio2tWRTS6BwG9FRfl6Zg=="
         val forventet = UUID.fromString("1048a8da-d591-4d2e-81c0-6f4545f97a66")
 
-        kravgrunnlagReferanseTilBehandlingId(referanse) shouldBe forventet
+        base64TilUuid(referanse) shouldBe forventet
     }
 
     @Test
@@ -24,7 +24,7 @@ internal class KravgrunnlagReferanseTest {
         // kode (River) fanger denne exceptionen og håndterer den kontrollert
         // fremfor å la den ukontrollert propagere ut av onPacket.
         shouldThrow<IllegalArgumentException> {
-            kravgrunnlagReferanseTilBehandlingId(
+            base64TilUuid(
                 java.util.Base64
                     .getEncoder()
                     .encodeToString("for kort".toByteArray()),
@@ -35,7 +35,7 @@ internal class KravgrunnlagReferanseTest {
     @Test
     fun `kaster IllegalArgumentException når strengen ikke er gyldig base64`() {
         shouldThrow<IllegalArgumentException> {
-            kravgrunnlagReferanseTilBehandlingId("dette er ikke base64!!!")
+            base64TilUuid("dette er ikke base64!!!")
         }
     }
 }
