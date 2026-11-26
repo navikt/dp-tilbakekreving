@@ -1,6 +1,5 @@
 name: Build and deploy
 
-
 on:
   push:
     branches-ignore:
@@ -86,7 +85,7 @@ jobs:
   deploy-prod:
     name: Deploy to Production
     needs: [ build ]
-    if: github.ref == 'refs/heads/main-ikke-prod'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment: prod-gcp
     permissions:
@@ -97,5 +96,6 @@ jobs:
         env:
           CLUSTER: prod-gcp
           RESOURCE: .nais/nais.yaml
+          VAR: image=${{ needs.build.outputs.image }}
           VARS: .nais/vars-prod.yaml
           PRINT_PAYLOAD: true
